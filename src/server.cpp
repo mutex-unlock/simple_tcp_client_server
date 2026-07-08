@@ -1,4 +1,4 @@
-﻿// Network_1__server.cpp: - серверная часть (TCP)
+﻿// server.cpp: - серверная часть (TCP)
 
 /*  Для того, чтобы сокеты заработали под Windows,
  *  необходимо при написании программы пройти следующие этапы:
@@ -40,8 +40,8 @@ const short BUFFER_SIZE = 1024;
 
 int main()                  // SERVER
 {
-    const char IP_SERV[] = "";          // Enter local Server IP address
-    const int PORT_NUM = 0;             // Enter Open working server port
+    const char IP_SERV[] = "127.0.0.1";          // Enter local Server IP address
+    const int PORT_NUM = 80;             // Enter Open working server port
 
     // 1. Инициализация сокетных интерфейсов Win32API.
     WSADATA wsData;
@@ -67,8 +67,8 @@ int main()                  // SERVER
      *    и её инициализация вызовом функции.
      */
     SOCKET ServSock = socket(AF_INET,
-                            SOCK_STREAM,
-                            0);
+                             SOCK_STREAM,
+                             0);
 
     if (ServSock == INVALID_SOCKET)
     {
@@ -109,7 +109,7 @@ int main()                  // SERVER
 
 
     int error_3_IP_bind = bind(ServSock,
-                               (sockaddr*)&servInfo,
+                               reinterpret_cast<sockaddr*>(&servInfo),
                                sizeof(servInfo));
 
     if (error_3_IP_bind != 0)
@@ -156,7 +156,7 @@ int main()                  // SERVER
     int clientInfo_size = sizeof(clientInfo);
 
     SOCKET ClientConn = accept(ServSock,
-                               (sockaddr*)&clientInfo,
+                               reinterpret_cast<sockaddr*>(&clientInfo),
                                &clientInfo_size);
 
     if (ClientConn == INVALID_SOCKET)
@@ -191,6 +191,7 @@ int main()                  // SERVER
                            servBuffer.data(),
                            servBuffer.size(),
                            0);
+
         std::cout << "Client`s message: " << servBuffer.data() << std::endl;
 
         std::cout << "Your (host) message: ";

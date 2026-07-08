@@ -1,4 +1,4 @@
-﻿// Network_1__client.cpp: - клиентская часть (TCP)
+﻿// client.cpp: - клиентская часть (TCP)
 
 /*  Для того, чтобы сокеты заработали под Windows,
  *  необходимо при написании программы пройти следующие этапы:
@@ -40,8 +40,8 @@ const short BUFFER_SIZE = 1024;
 
 int main()                  // CLIENT
 {
-    const char SERVER_IP[] = "";    // Enter IPv4 address of Server
-    const int SERVER_PORT_NUM = 0;  // Enter Listening port on Server side
+    const char SERVER_IP[] = "127.0.0.1";   // Enter IPv4 address of Server
+    const int SERVER_PORT_NUM = 80;         // Enter Listening port on Server side
 
     // 1. Инициализация сокетных интерфейсов Win32API.
     WSADATA wsData;
@@ -72,7 +72,7 @@ int main()                  // CLIENT
     if (ClientSock == INVALID_SOCKET)
     {
         std::cout << "Error initialization Client socket #"
-                  << WSAGetLastError() << std::endl;
+            << WSAGetLastError() << std::endl;
 
         closesocket(ClientSock);// закрыть дескриптор использовавшегося сокета
         WSACleanup();           // деинициализировать сокет
@@ -109,8 +109,8 @@ int main()                  // CLIENT
     ZeroMemory(&servInfo, sizeof(servInfo));
 
     servInfo.sin_family = AF_INET;
-    servInfo.sin_addr   = ip_to_num;    // Server's IPv4 after inet_pton() function
-    servInfo.sin_port   = htons(SERVER_PORT_NUM);
+    servInfo.sin_addr = ip_to_num;    // Server's IPv4 after inet_pton() function
+    servInfo.sin_port = htons(SERVER_PORT_NUM);
 
 
     /* Этап 4 (для клиента): Для клиентской части приложения:
@@ -118,14 +118,14 @@ int main()                  // CLIENT
      *                       (должны знать его IP-адрес/Порт).
      */
     int error_3_connect = connect(ClientSock,
-                                  (sockaddr*)&servInfo,
+                                  reinterpret_cast<sockaddr*>( & servInfo),
                                   sizeof(servInfo)
     );
 
     if (error_3_connect != 0)
     {
         std::cout << "Connection to server is FAILED. Error #"
-                  << WSAGetLastError() << std::endl;
+            << WSAGetLastError() << std::endl;
 
         closesocket(ClientSock);    // закрыть дескриптор использовавшегося сокета
         WSACleanup();               // деинициализировать сокет
@@ -176,7 +176,7 @@ int main()                  // CLIENT
         if (packet_size == SOCKET_ERROR)
         {
             std::cout << "Can`t send message to Server. Error #"
-                      << WSAGetLastError() << std::endl;
+                << WSAGetLastError() << std::endl;
 
             closesocket(ClientSock);// закрыть дескриптор использовавшегося сокета
             WSACleanup();           // деинициализировать сокет
@@ -193,7 +193,7 @@ int main()                  // CLIENT
 
         if (packet_size == SOCKET_ERROR) {
             std::cout << "Can't receive message from Server. Error # "
-                      << WSAGetLastError() << std::endl;
+                << WSAGetLastError() << std::endl;
 
             closesocket(ClientSock);// закрыть дескриптор использовавшегося сокета
             WSACleanup();           // деинициализировать сокет
